@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masen Brooks — IT, Cybersecurity &amp; Digital Forensics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030712;
+    --card: #0b1329;
+    --card-border: #1e293b;
+    --card-hover: #1e293b;
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --accent: #38bdf8;
+    --accent-glow: rgba(56, 189, 248, 0.15);
+    --accent-dark: #0284c7;
+    --max-w: 1380px;
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; }
+  body { overflow-x: hidden; line-height: 1.6; }
+
+  /* Top Scroll Progress Bar */
+  #scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), #60a5fa);
+    box-shadow: 0 0 8px var(--accent);
+    z-index: 100;
+    transition: width 0.1s ease-out;
+  }
+
+  /* Utility & Scaffolding */
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 32px; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Navigation */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    background: rgba(3, 7, 18, 0.75);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--card-border);
+  }
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+  }
+  .logo {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* Hero Section + Upper CMatrix Canvas */
+  .hero-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  #cmatrix-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  .hero {
+    position: relative;
+    z-index: 1;
+    padding: 160px 0 100px;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Profile Picture Frame */
+  .profile-frame {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 1 / 1;
+    border-radius: 16px;
+    background: var(--card);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 8px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px var(--accent-glow);
+    justify-self: center;
+  }
+
+  .profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #020617;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: var(--accent);
+    font-size: 13px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(8px);
+  }
+  .badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+  .hero h1 {
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+  .hero h1 .highlight {
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero p.lead {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 720px;
+    margin-bottom: 40px;
+  }
+  .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
+  }
+  .btn-primary:hover { background: #7dd3fc; transform: translateY(-2px); }
+  .btn-secondary {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--card-border);
+  }
+  .btn-secondary:hover { border-color: var(--text-muted); transform: translateY(-2px); }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 13.5px;
+    color: var(--text-dim);
+  }
+  .hero-meta a { color: var(--text-muted); text-decoration: none; cursor: pointer; }
+  .hero-meta a:hover { color: var(--accent); }
+
+  /* Lower Sections */
+  .lower-container {
+    position: relative;
+    width: 100%;
+  }
+
+  /* Grid Layouts */
+  section { padding: 80px 0; border-bottom: 1px solid var(--card-border); }
+  section:last-of-type { border-bottom: none; }
+  
+  .section-eyebrow {
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .section-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .section-desc { color: var(--text-muted); font-size: 15px; margin-bottom: 48px; }
+
+  /* Cards */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; }
+  
+  .card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 32px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    border-color: rgba(56, 189, 248, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Pillars Interactive */
+  .pillar-card { cursor: pointer; }
+  .pillar-header { display: flex; justify-content: space-between; align-items: center; }
+  .pillar-icon {
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    background: var(--accent-glow);
+    color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  .pillar-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+  .pillar-card p { font-size: 14px; color: var(--text-muted); }
+  .pillar-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, margin-top 0.3s ease;
+    font-size: 13.5px;
+    color: var(--text-dim);
+    border-top: 1px solid transparent;
+  }
+  .pillar-card.active .pillar-details {
+    max-height: 150px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top-color: var(--card-border);
+  }
+
+  /* Timeline / Path Layout */
+  .timeline { display: flex; flex-direction: column; gap: 24px; }
+  .timeline-card { display: flex; flex-direction: column; }
+  .timeline-meta { display: flex; justify-content: space-between; color: var(--text-dim); font-size: 13px; }
+  .timeline-title { font-size: 18px; font-weight: 600; color: var(--text); }
+  .timeline-org { color: var(--accent); font-size: 14px; font-weight: 500; }
+
+  /* Experience Image Split Grid */
+  .timeline-card-inner {
+    display: grid;
+    grid-template-columns: 1fr 120px;
+    gap: 24px;
+    align-items: center;
+  }
+  .timeline-content {
+    display: flex;
+    flex-direction: column;
+  }
+  .timeline-media {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    background: #020617;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .timeline-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 50%;
+  }
+
+  /* Education Image Styling - Standard 16:9 Aspect Ratio */
+  .education-media {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    background: #020617;
+    margin-bottom: 20px;
+  }
+  .education-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Tag System & Chips */
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .tag {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--card-border);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+  }
+  .tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Skills & Groups */
+  .skill-group h4 { font-size: 14px; color: var(--text-dim); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* Projects & Placeholder Cards */
+  .project-card { display: flex; flex-direction: column; justify-content: space-between; }
+  .project-card.placeholder {
+    border-style: dashed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 220px;
+    color: var(--text-dim);
+  }
+  .placeholder-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 1px dashed var(--card-border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+    margin-bottom: 12px;
+    font-size: 20px;
+  }
+
+  /* Footnotes */
+  .footnotes { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; }
+  .footnote-row { display: flex; gap: 12px; font-size: 14px; color: var(--text-muted); padding-top: 12px; border-top: 1px solid var(--card-border); }
+  .footnote-row .mark { color: var(--accent); }
+
+  /* Email Provider Modal Styling */
+  .email-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(3, 7, 18, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .email-modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .email-modal {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 32px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    transform: translateY(10px);
+    transition: transform 0.2s ease;
+  }
+  .email-modal-overlay.active .email-modal {
+    transform: translateY(0);
+  }
+  .email-modal h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .email-modal p {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+  .email-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .email-option-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: 1px solid var(--card-border);
+  }
+  .email-option-gmail {
+    background: #ea4335;
+    color: #fff;
+    border-color: #ea4335;
+  }
+  .email-option-gmail:hover { background: #d33426; }
+  .email-option-outlook {
+    background: #0078d4;
+    color: #fff;
+    border-color: #0078d4;
+  }
+  .email-option-outlook:hover { background: #106ebe; }
+  .email-modal-close {
+    background: transparent;
+    color: var(--text-dim);
+    border: none;
+    margin-top: 16px;
+    width: 100%;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .email-modal-close:hover { color: var(--text); }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--card-border);
+    padding: 80px 0 40px;
+    background: rgba(3, 7, 18, 0.9);
+  }
+  .footer-inner { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 40px; }
+  .footer-links { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 992px) {
+    .hero { grid-template-columns: 1fr; }
+    .profile-frame { max-width: 260px; order: -1; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .hero h1 { font-size: 36px; }
+    .footer-inner { flex-direction: column; }
+    .timeline-card-inner { grid-template-columns: 1fr; }
+    .timeline-media { width: 120px; height: 120px; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress Bar -->
+<div id="scroll-progress"></div>
+
+<!-- Email Provider Choice Modal -->
+<div class="email-modal-overlay" id="emailModal">
+  <div class="email-modal">
+    <h3>Choose Email Client</h3>
+    <p>Select your preferred platform to message Masen Brooks:</p>
+    <div class="email-options">
+      <a href="#" id="gmailLink" target="_blank" class="email-option-btn email-option-gmail" onclick="closeEmailModal()">Open with Gmail</a>
+      <a href="#" id="outlookLink" target="_blank" class="email-option-btn email-option-outlook" onclick="closeEmailModal()">Open with Outlook</a>
+    </div>
+    <button class="email-modal-close mono" onclick="closeEmailModal()">Cancel</button>
+  </div>
+</div>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="#" class="logo">MB<span>.</span></a>
+    <ul class="nav-links mono">
+      <li><a href="#about">01. About</a></li>
+      <li><a href="#path">02. Path</a></li>
+      <li><a href="#work">03. Work</a></li>
+      <li><a href="#skills">04. Skills</a></li>
+      <li><a href="#education">05. Education</a></li>
+      <li><a href="#contact">06. Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO SECTION -->
+<div class="hero-container">
+  <canvas id="cmatrix-canvas"></canvas>
+  <main class="container">
+    <section class="hero">
+      <div class="hero-content">
+        <div class="badge mono">
+          <span class="dot"></span>
+          <span>Available for internships &amp; co-ops, Fall 2026</span>
+        </div>
+        <h1>I keep systems running, <span class="highlight">then figure out what happened when they don't.</span></h1>
+        <p class="lead">I'm an Information Technology student at Georgia Southern University, minoring in Cybercrime. My work spans IT support, systems administration, and a growing interest in digital forensics.</p>
+        <div class="hero-ctas">
+          <a href="#work" class="btn btn-primary">See my work</a>
+          <a href="#contact" class="btn btn-secondary">Get in touch</a>
+        </div>
+        <div class="hero-meta mono">
+          <span>Statesboro &amp; Kingsland, GA</span>
+          <a onclick="openEmailModal(event)">brooksmasen49@gmail.com</a>
+          <a href="https://linkedin.com/in/mlbit" target="_blank" rel="noopener">linkedin.com/in/mlbit</a>
+        </div>
+      </div>
+
+      <div class="profile-frame">
+        <img src="https://media.licdn.com/dms/image/v2/D4E03AQH_EketQfqWoQ/profile-displayphoto-scale_400_400/B4EZ3CO_UzKcAg-/0/1777080203718?e=1790812800&v=beta&t=m8ck3UsY2iz3PFVy7pvyrnm_1mTkWqHzq38bIfVsGAk" alt="Masen Brooks" class="profile-img" onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'profile-img mono\' style=\'font-size: 13px; text-align: center; padding: 20px;\'>[ Headshot Placeholder ]<br><span style=\'font-size: 11px; opacity: 0.6;\'>src=&quot;profile.jpg&quot;</span></div>';">
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- LOWER CONTAINER -->
+<div class="lower-container">
+  <main class="container">
+    
+    <!-- 01. ABOUT -->
+    <section id="about">
+      <div class="section-eyebrow mono">01. About</div>
+      <h2 class="section-title">Support work taught me systems. Security is teaching me to break them apart.</h2>
+      <p class="section-desc">I got into IT through support work, and stayed for the investigative side of it. Fixing what's broken and figuring out why it broke turn out to be the same instinct — one just happens after the fact.</p>
+      
+      <div class="grid-3">
+        <div class="card pillar-card" onclick="togglePillar(this)">
+          <div class="pillar-header">
+            <div class="pillar-icon mono">01</div>
+          </div>
+          <h3>IT Support &amp; Admin</h3>
+          <p>Hands-on with ticketing systems, endpoint management, and keeping people online.</p>
+          <div class="pillar-details">
+            Day to day this means Active Directory, Microsoft Intune, and juggling tickets across Mojo Helpdesk and ServiceNow.
+          </div>
+        </div>
+
+        <div class="card pillar-card" onclick="togglePillar(this)">
+          <div class="pillar-header">
+            <div class="pillar-icon mono">02</div>
+          </div>
+          <h3>Cybersecurity</h3>
+          <p>Studying how systems get compromised, and what it actually takes to prevent it.</p>
+          <div class="pillar-details">
+            My Cybersecurity emphasis is pushing me past general IT knowledge into how attacks actually happen — and allows me to learn how to harden/secure systems.
+          </div>
+        </div>
+
+        <div class="card pillar-card" onclick="togglePillar(this)">
+          <div class="pillar-header">
+            <div class="pillar-icon mono">03</div>
+          </div>
+          <h3>Digital Forensics</h3>
+          <p>Drawn to the investigative half of security: piecing together incidents.</p>
+          <div class="pillar-details">
+            Pursuing a minor in Cybercrime drew me toward Digital Forensics, where I've learned to analyze how cyberattacks occur — and master the critical process of gathering digital evidence.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02. PATH / EXPERIENCE -->
+    <section id="path">
+      <div class="section-eyebrow mono">02. Path</div>
+      <h2 class="section-title">Where I've Worked</h2>
+      <p class="section-desc">Hands-on experience, operational support, and model evaluation.</p>
+      
+      <div class="timeline">
+        <div class="card timeline-card">
+          <div class="timeline-meta mono" style="margin-bottom: 12px;">
+            <span>IT Operations</span>
+            <span>Sep 2025 — Present</span>
+          </div>
+
+          <div class="timeline-card-inner">
+            <div class="timeline-content">
+              <div class="timeline-title">Field Technician, IT Services</div>
+              <div class="timeline-org">Georgia Southern University</div>
+              <p style="color: var(--text-muted); font-size: 14.5px; margin-top: 8px;">
+                I handle support tickets and incidents for staff across campus, and maintain lab environments — managing accounts, policies, and device configurations through Active Directory and Intune.
+              </p>
+              <div class="tags mono">
+                <span class="tag">Active Directory</span>
+                <span class="tag">Microsoft Intune</span>
+                <span class="tag">Mojo Helpdesk</span>
+                <span class="tag">ServiceNow</span>
+              </div>
+            </div>
+
+            <div class="timeline-media">
+              <img src="https://www.clipartmax.com/png/middle/326-3261820_georgia-southern-university-division-of-continuing-georgia-southern-university-logo-png.png" alt="Georgia Southern University IT Support" onerror="this.onerror=null; this.parentNode.innerHTML='<div style=\'padding:12px; font-size:11px; color:var(--text-dim); text-align:center; height:100%; display:flex; align-items:center; justify-content:center;\' class=\'mono\'>[ Image Placeholder ]</div>';">
+            </div>
+          </div>
+        </div>
+
+        <div class="card timeline-card">
+          <div class="timeline-meta mono" style="margin-bottom: 12px;">
+            <span>Model Benchmarking</span>
+            <span>May 2026 — Present</span>
+          </div>
+
+          <div class="timeline-card-inner">
+            <div class="timeline-content">
+              <div class="timeline-title">AI Trainer (Fellow)</div>
+              <div class="timeline-org">Handshake, Remote</div>
+              <p style="color: var(--text-muted); font-size: 14.5px; margin-top: 8px;">
+                I evaluate AI model outputs across text, image, video, and audio, looking for where they break down or get things wrong. Tracing model logic and writing feedback to improve accuracy.
+              </p>
+              <div class="tags mono">
+                <span class="tag">Logic Testing</span>
+                <span class="tag">Model Evaluation</span>
+                <span class="tag">Technical Diagnostics</span>
+              </div>
+            </div>
+
+            <div class="timeline-media">
+              <img src="https://www.csusm.edu/careers/handshakelogos/round.png" alt="Handshake AI Model Benchmarking" onerror="this.onerror=null; this.parentNode.innerHTML='<div style=\'padding:12px; font-size:11px; color:var(--text-dim); text-align:center; height:100%; display:flex; align-items:center; justify-content:center;\' class=\'mono\'>[ Image Placeholder ]</div>';">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03. WORK / PROJECTS -->
+    <section id="work">
+      <div class="section-eyebrow mono">03. Work</div>
+      <h2 class="section-title">Things I've Built</h2>
+      <p class="section-desc">Selected projects, design work, and development writeups.</p>
+      
+      <div class="grid-2">
+        <div class="card project-card">
+          <div>
+            <div class="timeline-meta mono" style="margin-bottom: 8px;">
+              <span>Front-End Development</span>
+              <span>2025</span>
+            </div>
+            <h3 style="font-size: 18px; margin-bottom: 12px;">Solar Tide Studios</h3>
+            <p style="color: var(--text-muted); font-size: 14.5px;">A responsive site built from the ground up — I handled the layout, styling, and interactivity myself, from first wireframe to a working front-end.</p>
+          </div>
+          <div class="tags mono">
+            <span class="tag">HTML</span>
+            <span class="tag">CSS</span>
+            <span class="tag">JavaScript</span>
+          </div>
+        </div>
+
+        <div class="card project-card placeholder">
+          <div class="placeholder-icon">+</div>
+          <h3 style="font-size: 16px; color: var(--text);">More on the way</h3>
+          <p style="font-size: 13.5px;">Lab builds, CTF writeups, and forensics case studies will land here as I finish them.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04. SKILLS -->
+    <section id="skills">
+      <div class="section-eyebrow mono">04. Skills</div>
+      <h2 class="section-title">What I Work With</h2>
+      <p class="section-desc">Languages, administration toolsets, and supporting platforms.</p>
+      
+      <div class="grid-2">
+        <div class="card skill-group">
+          <h4 class="mono">Systems &amp; IT</h4>
+          <div class="tags mono">
+            <span class="tag">Windows Administration</span>
+            <span class="tag">Linux Administration</span>
+            <span class="tag">Active Directory</span>
+            <span class="tag">Microsoft Intune</span>
+            <span class="tag">Automation</span>
+          </div>
+        </div>
+
+        <div class="card skill-group">
+          <h4 class="mono">Languages</h4>
+          <div class="tags mono">
+            <span class="tag">Java</span>
+            <span class="tag">Python</span>
+            <span class="tag">HTML / CSS / JavaScript</span>
+          </div>
+        </div>
+
+        <div class="card skill-group">
+          <h4 class="mono">Tools &amp; Platforms</h4>
+          <div class="tags mono">
+            <span class="tag">Dell Client Foundations</span>
+            <span class="tag">Dell Enterprise Self-Dispatch</span>
+            <span class="tag">ServiceNow</span>
+          </div>
+        </div>
+
+        <div class="card skill-group">
+          <h4 class="mono">Other</h4>
+          <div class="tags mono">
+            <span class="tag">Customer Care</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05. EDUCATION -->
+    <section id="education">
+      <div class="section-eyebrow mono">05. Education</div>
+      <h2 class="section-title">Academic Background</h2>
+      <p class="section-desc">Degrees, certifications, and academic honors.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="education-media">
+            <img src="https://www.vmcdn.ca/f/files/griceconnect/images/articles/gs-bushes-rendering.png" alt="Georgia Southern University" onerror="this.onerror=null; this.parentNode.innerHTML='<div style=\'padding:12px; font-size:11px; color:var(--text-dim); text-align:center; height:100%; display:flex; align-items:center; justify-content:center;\' class=\'mono\'>[ Image Placeholder ]</div>';">
+          </div>
+          <div class="timeline-meta mono" style="margin-bottom: 8px;">
+            <span>Expected 2027</span>
+          </div>
+          <h3>Georgia Southern University</h3>
+          <p style="color: var(--text-muted); font-size: 14.5px;">B.S. Information Technology, Minor in Cybercrime</p>
+        </div>
+
+        <div class="card">
+          <div class="education-media">
+            <img src="https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl0i8QybKu6JQMuFNWnnfqN96BmWsjlPbHHky5j80XTafUnNAMIshzV_Imin4NzfEmbfGkdkuKgJF8zwi12Wmf5K7zEhnXcxLAER6Ipq32qClLW2_IMjoY6JkECyQb_1PFMR8xSgg=s680-w680-h510-rw" alt="Camden County High School" onerror="this.onerror=null; this.parentNode.innerHTML='<div style=\'padding:12px; font-size:11px; color:var(--text-dim); text-align:center; height:100%; display:flex; align-items:center; justify-content:center;\' class=\'mono\'>[ Image Placeholder ]</div>';">
+          </div>
+          <div class="timeline-meta mono" style="margin-bottom: 8px;">
+            <span>2020 — 2024</span>
+          </div>
+          <h3>Camden County High School</h3>
+          <p style="color: var(--text-muted); font-size: 14.5px;">Honor Graduate</p>
+        </div>
+      </div>
+
+      <div class="footnotes">
+        <div class="footnote-row"><span class="mark">—</span>President's List &amp; Dean's List, Georgia Southern University</div>
+        <div class="footnote-row"><span class="mark">—</span>Google AI Essentials certified — prompting, responsible AI use, and productivity tools</div>
+        <div class="footnote-row"><span class="mark">—</span>Member, Association for Computing Machinery (ACM) and Tech Developers Association (TDA)</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 06. CONTACT -->
+  <footer id="contact">
+    <div class="container footer-inner">
+      <div>
+        <div class="section-eyebrow mono">06. Contact</div>
+        <h2 style="font-size: 32px; font-weight: 700; margin-bottom: 8px;">Let's Talk</h2>
+        <p style="color: var(--text-muted); font-size: 15px; max-width: 450px;">I'm looking for internship and co-op opportunities in IT support, systems administration, cybersecurity, or digital forensics. Reach out directly or connect on LinkedIn.</p>
+      </div>
+      <div class="footer-links">
+        <button onclick="openEmailModal(event)" class="btn btn-primary">Email Me</button>
+        <a href="https://linkedin.com/in/mlbit" target="_blank" rel="noopener" class="btn btn-secondary">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+  // Scroll Progress Bar Update
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrolled = (scrollTop / docHeight) * 100;
+    document.getElementById('scroll-progress').style.width = `${scrolled}%`;
+  });
+
+  // Interactive Pillars Toggle
+  function togglePillar(element) {
+    const isActive = element.classList.contains('active');
+    document.querySelectorAll('.pillar-card').forEach(card => card.classList.remove('active'));
+    if (!isActive) element.classList.add('active');
+  }
+
+  // Email Client Modal Logic
+  function openEmailModal(e) {
+    e.preventDefault();
+    const email = "brooksmasen49@gmail.com";
+    const subject = encodeURIComponent("Inquiry regarding opportunities / Portfolio contact");
+    const body = encodeURIComponent("Hi Masen,\n\nI came across your portfolio and wanted to reach out regarding...\n");
+
+    // Construct web links for Gmail and Outlook web versions
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+    const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${email}&subject=${subject}&body=${body}`;
+
+    document.getElementById('gmailLink').href = gmailUrl;
+    document.getElementById('outlookLink').href = outlookUrl;
+
+    document.getElementById('emailModal').classList.add('active');
+  }
+
+  function closeEmailModal() {
+    document.getElementById('emailModal').classList.remove('active');
+  }
+
+  // Close modal when clicking outside the box
+  window.addEventListener('click', (e) => {
+    const modal = document.getElementById('emailModal');
+    if (e.target === modal) {
+      closeEmailModal();
+    }
+  });
+
+  // CMATRIX Canvas
+  (function() {
+    const canvas = document.getElementById('cmatrix-canvas');
+    const ctx = canvas.getContext('2d');
+    const container = canvas.parentElement;
+    let width, height, dpr;
+    let columns = [];
+    const fontSize = 15;
+    const dropSpeed = 1.00;
+    const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@#$%&*<>[]{}';
+
+    function resize() {
+      dpr = window.devicePixelRatio || 1;
+      width = container.offsetWidth;
+      height = container.offsetHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const colCount = Math.floor(width / fontSize);
+      columns = [];
+      for (let i = 0; i < colCount; i++) {
+        columns.push({
+          x: i * fontSize,
+          y: Math.random() * -height
+        });
+      }
+    }
+
+    function draw() {
+      ctx.fillStyle = 'rgba(3, 7, 18, 0.08)';
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = `${fontSize}px 'JetBrains Mono', monospace`;
+
+      for (let i = 0; i < columns.length; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(char, columns[i].x, columns[i].y);
+
+        if (columns[i].y > height && Math.random() > 0.98) {
+          columns[i].y = 0;
+        } else {
+          columns[i].y += dropSpeed;
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    draw();
+  })();
+</script>
+</body>
+</html>
